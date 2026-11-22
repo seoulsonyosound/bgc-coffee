@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { useParams } from "next/navigation";
@@ -25,6 +25,7 @@ export function ProductDetailView() {
   const [selectedAddOnIds, setSelectedAddOnIds] = useState<string[]>([]);
   const [quantity, setQuantity] = useState(1);
   const [addedFeedback, setAddedFeedback] = useState(false);
+  const cupRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     if (!slug) return;
@@ -55,10 +56,67 @@ export function ProductDetailView() {
     };
   }, [slug]);
 
-  const toggleAddOn = (id: string) => {
-    setSelectedAddOnIds((prev) =>
-      prev.includes(id) ? prev.filter((item) => item !== id) : [...prev, id]
+  const runAddToCup = (rowEl: HTMLElement | null, label: string) => {
+    const cupEl = cupRef.current;
+    if (!rowEl || !cupEl) return;
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+
+    rowEl.animate(
+      [
+        { transform: "scale(1)" },
+        { transform: "scale(0.98)" },
+        { transform: "scale(1)" },
+      ],
+      { duration: 140, easing: "ease-out" }
     );
+
+    const rowRect = rowEl.getBoundingClientRect();
+    const cupRect = cupEl.getBoundingClientRect();
+    const startX = rowRect.left + 22;
+    const startY = rowRect.top + rowRect.height / 2;
+    const endX = cupRect.left + cupRect.width / 2;
+    const endY = cupRect.top + cupRect.height * 0.24;
+    const midX = (startX + endX) / 2;
+    const midY = Math.min(startY, endY) - 64;
+
+    const token = document.createElement("span");
+    token.className = "addon-fly-token";
+    token.textContent = label.trim().charAt(0).toUpperCase();
+    document.body.appendChild(token);
+
+    const anim = token.animate(
+      [
+        { transform: `translate3d(${startX}px, ${startY}px, 0) scale(1)`, opacity: 1, offset: 0 },
+        { transform: `translate3d(${midX}px, ${midY}px, 0) scale(0.9)`, opacity: 1, offset: 0.45 },
+        { transform: `translate3d(${endX}px, ${endY}px, 0) scale(0.76)`, opacity: 1, offset: 0.78 },
+        { transform: `translate3d(${endX}px, ${endY + 26}px, 0) scale(0.55)`, opacity: 0, offset: 1 },
+      ],
+      { duration: 560, easing: "cubic-bezier(0.22, 1, 0.36, 1)", fill: "forwards" }
+    );
+    const cleanup = () => token.remove();
+    anim.onfinish = cleanup;
+    anim.oncancel = cleanup;
+
+    cupEl.animate(
+      [
+        { transform: "scale(1)" },
+        { transform: "scale(1.02)" },
+        { transform: "scale(1)" },
+      ],
+      { duration: 180, delay: 420, easing: "ease-out" }
+    );
+  };
+
+  const toggleAddOn = (
+    id: string,
+    label: string,
+    rowEl: HTMLElement | null
+  ) => {
+    const willCheck = !selectedAddOnIds.includes(id);
+    setSelectedAddOnIds((prev) =>
+      willCheck ? [...prev, id] : prev.filter((item) => item !== id)
+    );
+    if (willCheck) runAddToCup(rowEl, label);
   };
 
   const selectedSub = useMemo(
@@ -154,7 +212,7 @@ export function ProductDetailView() {
           <div className="lg:col-span-5">
             <div className="sticky top-28 border border-[#171717] bg-white p-3 vintage-shadow">
               <div className="relative aspect-square overflow-hidden border border-[#171717] bg-[#F7F4EE] p-6">
-                <div className="relative h-full w-full">
+                <div ref={cupRef} className="relative h-full w-full">
                   <Image
                     src={resolveAssetUrl(product.imageUrl)}
                     alt={product.name}
@@ -170,6 +228,18 @@ export function ProductDetailView() {
                   </Badge>
                 </div>
               </div>
+              {selectedAddOns.length > 0 && (
+                <div className="mt-2.5 flex flex-wrap gap-1.5">
+                  {selectedAddOns.map((addon) => (
+                    <span
+                      key={addon.id}
+                      className="addon-chip border border-[#171717] bg-[#F7F4EE] px-2 py-0.5 font-display text-[10px] font-bold uppercase tracking-[0.12em] text-[#171717]"
+                    >
+                      + {addon.label}
+                    </span>
+                  ))}
+                </div>
+              )}
               <div className="mt-3 flex items-center justify-between font-display text-[10px] font-semibold uppercase tracking-[0.16em] text-[#171717]/70">
                 <span>BGC COFFEE CO. — ITEM SPEC</span>
                 <span className="text-[#795548]">MADE TO ORDER</span>
@@ -294,7 +364,13 @@ export function ProductDetailView() {
                         <input
                           type="checkbox"
                           checked={checked}
-                          onChange={() => toggleAddOn(addon.id)}
+                          onChange={(e) =>
+                            toggleAddOn(
+                              addon.id,
+                              addon.label,
+                              e.currentTarget.closest("label")
+                            )
+                          }
                           className="h-3.5 w-3.5 accent-[#795548]"
                         />
                         <span className="text-[#171717]">{addon.label}</span>

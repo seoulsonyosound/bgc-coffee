@@ -127,6 +127,38 @@ body {
   animation: editorial-tag-in 240ms cubic-bezier(0.22, 1, 0.36, 1) both;
 }
 
+/* Lightweight add-to-cup token & chip */
+.addon-fly-token {
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 60;
+  width: 24px;
+  height: 24px;
+  margin: -12px 0 0 -12px;
+  border-radius: 9999px;
+  border: 1.5px solid #171717;
+  background: #795548;
+  color: #ffffff;
+  font-family: var(--font-display);
+  font-size: 11px;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  pointer-events: none;
+  will-change: transform, opacity;
+}
+
+@keyframes addon-chip-in {
+  from { opacity: 0; transform: translate3d(0, 4px, 0) scale(0.95); }
+  to { opacity: 1; transform: translate3d(0, 0, 0) scale(1); }
+}
+
+.addon-chip {
+  animation: addon-chip-in 180ms ease-out both;
+}
+
 @media (prefers-reduced-motion: reduce) {
   .editorial-press,
   .editorial-press:hover,
@@ -137,7 +169,8 @@ body {
 
   .animate-cup-bounce,
   .animate-editorial-pop,
-  .animate-editorial-tag {
+  .animate-editorial-tag,
+  .addon-chip {
     animation: none;
   }
 }
