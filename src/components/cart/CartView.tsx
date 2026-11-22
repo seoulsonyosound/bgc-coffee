@@ -76,14 +76,18 @@ export function CartView() {
             >
               <Link
                 href={`/menu/${item.productSlug}`}
-                className="relative h-24 w-24 shrink-0 overflow-hidden border border-[#171717] bg-[#E8DED2]"
+                className="relative h-24 w-24 shrink-0"
               >
+                <span
+                  aria-hidden="true"
+                  className="pointer-events-none absolute bottom-0.5 left-1/2 h-3.5 w-20 -translate-x-[68%] rounded-full bg-[radial-gradient(ellipse_at_68%_50%,rgba(23,23,23,0.48)_0%,rgba(23,23,23,0.24)_42%,rgba(23,23,23,0)_76%)] blur-[4px]"
+                />
                 <Image
                   src={resolveAssetUrl(item.imageUrl)}
                   alt={item.productName}
                   fill
                   sizes="96px"
-                  className="object-cover"
+                  className="relative z-10 object-contain"
                 />
               </Link>
 

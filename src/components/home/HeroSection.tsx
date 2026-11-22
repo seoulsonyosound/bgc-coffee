@@ -113,7 +113,7 @@ export function HeroSection() {
                   fill
                   priority
                   sizes="(max-width: 1024px) 100vw, 42vw"
-                  className="object-cover object-center contrast-[1.06] sepia-[0.08]"
+                  className="object-cover object-right contrast-[1.06] sepia-[0.08]"
                 />
               </div>
               <div className="mt-3 flex items-center justify-between font-display text-[10px] font-semibold uppercase tracking-[0.16em] text-[#171717]/75">

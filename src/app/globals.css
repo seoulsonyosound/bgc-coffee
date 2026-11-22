@@ -133,16 +133,19 @@ body {
   top: 0;
   left: 0;
   z-index: 60;
-  width: 24px;
-  height: 24px;
-  margin: -12px 0 0 -12px;
+  height: 26px;
+  min-width: 26px;
+  padding: 0 7px;
+  margin: -13px 0 0 -13px;
   border-radius: 9999px;
   border: 1.5px solid #171717;
   background: #795548;
   color: #ffffff;
+  box-shadow: 2px 2px 0px #171717;
   font-family: var(--font-display);
-  font-size: 11px;
+  font-size: 10px;
   font-weight: 700;
+  letter-spacing: 0.04em;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -151,12 +154,13 @@ body {
 }
 
 @keyframes addon-chip-in {
-  from { opacity: 0; transform: translate3d(0, 4px, 0) scale(0.95); }
-  to { opacity: 1; transform: translate3d(0, 0, 0) scale(1); }
+  0% { opacity: 0; transform: translate3d(0, 6px, 0) scale(0.92); }
+  70% { opacity: 1; transform: translate3d(0, -1px, 0) scale(1.03); }
+  100% { opacity: 1; transform: translate3d(0, 0, 0) scale(1); }
 }
 
 .addon-chip {
-  animation: addon-chip-in 180ms ease-out both;
+  animation: addon-chip-in 240ms cubic-bezier(0.22, 1, 0.36, 1) both;
 }
 
 @media (prefers-reduced-motion: reduce) {

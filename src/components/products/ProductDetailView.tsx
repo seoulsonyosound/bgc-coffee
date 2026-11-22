@@ -64,46 +64,66 @@ export function ProductDetailView() {
     rowEl.animate(
       [
         { transform: "scale(1)" },
-        { transform: "scale(0.98)" },
+        { transform: "scale(0.975)" },
         { transform: "scale(1)" },
       ],
-      { duration: 140, easing: "ease-out" }
+      { duration: 150, easing: "cubic-bezier(0.22, 1, 0.36, 1)" }
     );
 
     const rowRect = rowEl.getBoundingClientRect();
     const cupRect = cupEl.getBoundingClientRect();
-    const startX = rowRect.left + 22;
-    const startY = rowRect.top + rowRect.height / 2;
-    const endX = cupRect.left + cupRect.width / 2;
-    const endY = cupRect.top + cupRect.height * 0.24;
-    const midX = (startX + endX) / 2;
-    const midY = Math.min(startY, endY) - 64;
+    const sx = rowRect.left + 22;
+    const sy = rowRect.top + rowRect.height / 2;
+    const ex = cupRect.left + cupRect.width / 2;
+    const ey = cupRect.top + cupRect.height * 0.22;
+    const cx = (sx + ex) / 2;
+    const cy = Math.min(sy, ey) - Math.min(110, Math.max(65, Math.abs(ex - sx) * 0.28));
 
     const token = document.createElement("span");
     token.className = "addon-fly-token";
-    token.textContent = label.trim().charAt(0).toUpperCase();
+    token.textContent = `+${label.trim().charAt(0).toUpperCase()}`;
     document.body.appendChild(token);
 
-    const anim = token.animate(
-      [
-        { transform: `translate3d(${startX}px, ${startY}px, 0) scale(1)`, opacity: 1, offset: 0 },
-        { transform: `translate3d(${midX}px, ${midY}px, 0) scale(0.9)`, opacity: 1, offset: 0.45 },
-        { transform: `translate3d(${endX}px, ${endY}px, 0) scale(0.76)`, opacity: 1, offset: 0.78 },
-        { transform: `translate3d(${endX}px, ${endY + 26}px, 0) scale(0.55)`, opacity: 0, offset: 1 },
-      ],
-      { duration: 560, easing: "cubic-bezier(0.22, 1, 0.36, 1)", fill: "forwards" }
-    );
+    // Sample smooth quadratic Bezier arc into the top of the cup, then drop in
+    const frames: Keyframe[] = [];
+    const steps = 7;
+    for (let i = 0; i <= steps; i++) {
+      const t = i / steps;
+      const inv = 1 - t;
+      const x = inv * inv * sx + 2 * inv * t * cx + t * t * ex;
+      const y = inv * inv * sy + 2 * inv * t * cy + t * t * ey;
+      const scale = 1.05 - t * 0.25;
+      const rot = -10 + t * 24;
+      frames.push({
+        transform: `translate3d(${x}px, ${y}px, 0) scale(${scale}) rotate(${rot}deg)`,
+        opacity: 1,
+        offset: t * 0.78,
+      });
+    }
+    frames.push({
+      transform: `translate3d(${ex}px, ${ey + 30}px, 0) scale(0.48) rotate(22deg)`,
+      opacity: 0,
+      offset: 1,
+    });
+
+    const anim = token.animate(frames, {
+      duration: 580,
+      easing: "cubic-bezier(0.22, 1, 0.36, 1)",
+      fill: "forwards",
+    });
     const cleanup = () => token.remove();
     anim.onfinish = cleanup;
     anim.oncancel = cleanup;
 
+    // Elastic cup catch & settle as token drops in
     cupEl.animate(
       [
-        { transform: "scale(1)" },
-        { transform: "scale(1.02)" },
-        { transform: "scale(1)" },
+        { transform: "translate3d(0, 0, 0) scale(1, 1)" },
+        { transform: "translate3d(0, 3px, 0) scale(1.028, 0.972)", offset: 0.4 },
+        { transform: "translate3d(0, -2px, 0) scale(0.992, 1.014)", offset: 0.75 },
+        { transform: "translate3d(0, 0, 0) scale(1, 1)" },
       ],
-      { duration: 180, delay: 420, easing: "ease-out" }
+      { duration: 240, delay: 430, easing: "cubic-bezier(0.22, 1, 0.36, 1)" }
     );
   };
 
@@ -116,7 +136,21 @@ export function ProductDetailView() {
     setSelectedAddOnIds((prev) =>
       willCheck ? [...prev, id] : prev.filter((item) => item !== id)
     );
-    if (willCheck) runAddToCup(rowEl, label);
+    if (willCheck) {
+      runAddToCup(rowEl, label);
+    } else if (
+      rowEl &&
+      !window.matchMedia("(prefers-reduced-motion: reduce)").matches
+    ) {
+      rowEl.animate(
+        [{ transform: "scale(1)" }, { transform: "scale(0.985)" }, { transform: "scale(1)" }],
+        { duration: 120, easing: "ease-out" }
+      );
+      cupRef.current?.animate(
+        [{ transform: "scale(1)" }, { transform: "scale(0.985)" }, { transform: "scale(1)" }],
+        { duration: 150, easing: "ease-out" }
+      );
+    }
   };
 
   const selectedSub = useMemo(
@@ -233,7 +267,7 @@ export function ProductDetailView() {
                   {selectedAddOns.map((addon) => (
                     <span
                       key={addon.id}
-                      className="addon-chip border border-[#171717] bg-[#F7F4EE] px-2 py-0.5 font-display text-[10px] font-bold uppercase tracking-[0.12em] text-[#171717]"
+                      className="addon-chip border border-[#171717] bg-[#F7F4EE] px-2 py-0.5 font-display text-[10px] font-bold uppercase tracking-[0.12em] text-[#171717] shadow-[2px_2px_0px_#171717]"
                     >
                       + {addon.label}
                     </span>
