@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { MenuBrowser } from "@/components/products/MenuBrowser";
+import { CoffeeSteamCanvas } from "@/components/ui/CoffeeSteamCanvas";
 
 export const metadata: Metadata = {
   title: "Coffee Menu",
@@ -11,8 +12,9 @@ export default function MenuPage() {
   return (
     <div className="bg-white">
       {/* Vintage Catalog Header Banner */}
-      <section className="bg-paper-grain text-[#171717] py-14 sm:py-18 border-b border-[#171717]">
-        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+      <section className="relative overflow-hidden bg-paper-grain text-[#171717] py-14 sm:py-18 border-b border-[#171717]">
+        <CoffeeSteamCanvas ribbonCount={5} />
+        <div className="relative z-10 mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <div className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
             <div>
               <p className="font-display text-xs font-bold uppercase tracking-[0.24em] text-[#795548]">

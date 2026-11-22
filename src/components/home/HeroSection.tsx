@@ -1,11 +1,13 @@
 import Link from "next/link";
 import Image from "next/image";
 import { ArrowRight } from "lucide-react";
+import { CoffeeSteamCanvas } from "@/components/ui/CoffeeSteamCanvas";
 
 export function HeroSection() {
   return (
-    <section className="bg-paper-grain border-b border-[#171717] text-[#171717]">
-      <div className="mx-auto max-w-7xl px-4 py-12 sm:px-6 sm:py-16 lg:px-8 lg:py-20">
+    <section className="relative overflow-hidden bg-paper-grain border-b border-[#171717] text-[#171717]">
+      <CoffeeSteamCanvas ribbonCount={7} />
+      <div className="relative z-10 mx-auto max-w-7xl px-4 py-12 sm:px-6 sm:py-16 lg:px-8 lg:py-20">
         {/* Editorial Issue Metadata Row */}
         <div className="mb-8 flex flex-wrap items-center justify-between gap-2 border-b border-[#171717] pb-3 font-display text-[11px] font-semibold uppercase tracking-[0.2em] text-[#171717]/75">
           <span>VOL. 01 — BGC COFFEE CO.</span>

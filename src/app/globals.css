@@ -64,3 +64,80 @@ body {
 .vintage-shadow-brown {
   box-shadow: 4px 4px 0px #795548;
 }
+
+/* Tactile editorial button & customization micro-interactions (compositor-only) */
+.editorial-press {
+  transition: transform 160ms cubic-bezier(0.22, 1, 0.36, 1),
+    background-color 180ms ease,
+    border-color 180ms ease,
+    color 180ms ease;
+}
+
+.editorial-press:hover {
+  transform: translate3d(0, -2px, 0);
+}
+
+.editorial-press:active {
+  transform: translate3d(0, 1px, 0) scale(0.985);
+}
+
+@keyframes editorial-cup-bounce {
+  0% {
+    transform: translate3d(0, 0, 0) scale(1);
+  }
+  40% {
+    transform: translate3d(0, -6px, 0) scale(1.045) rotate(-1.5deg);
+  }
+  100% {
+    transform: translate3d(0, 0, 0) scale(1) rotate(0deg);
+  }
+}
+
+@keyframes editorial-pop {
+  0% {
+    transform: translate3d(0, 4px, 0) scale(0.96);
+    opacity: 0.65;
+  }
+  100% {
+    transform: translate3d(0, 0, 0) scale(1);
+    opacity: 1;
+  }
+}
+
+@keyframes editorial-tag-in {
+  0% {
+    transform: translate3d(0, 6px, 0) scale(0.92);
+    opacity: 0;
+  }
+  100% {
+    transform: translate3d(0, 0, 0) scale(1);
+    opacity: 1;
+  }
+}
+
+.animate-cup-bounce {
+  animation: editorial-cup-bounce 360ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.animate-editorial-pop {
+  animation: editorial-pop 200ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.animate-editorial-tag {
+  animation: editorial-tag-in 240ms cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .editorial-press,
+  .editorial-press:hover,
+  .editorial-press:active {
+    transition: none;
+    transform: none;
+  }
+
+  .animate-cup-bounce,
+  .animate-editorial-pop,
+  .animate-editorial-tag {
+    animation: none;
+  }
+}
