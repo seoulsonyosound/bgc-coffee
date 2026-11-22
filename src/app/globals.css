@@ -1,0 +1,66 @@
+@import "tailwindcss";
+
+:root {
+  --bg-white: #ffffff;
+  --bg-cream: #f7f4ee;
+  --bg-beige: #e8ded2;
+  --fg-black: #171717;
+  --accent-brown: #795548;
+  --accent-espresso: #3b2923;
+  --border-gray: #d9d9d9;
+}
+
+@theme inline {
+  --color-background: var(--bg-cream);
+  --color-foreground: var(--fg-black);
+  --color-vintage-black: #171717;
+  --color-pure-white: #ffffff;
+  --color-warm-cream: #f7f4ee;
+  --color-coffee-brown: #795548;
+  --color-dark-espresso: #3b2923;
+  --color-light-beige: #e8ded2;
+  --color-soft-gray: #d9d9d9;
+  --font-sans: var(--font-dm-sans), system-ui, -apple-system, sans-serif;
+  --font-display: var(--font-space-grotesk), system-ui, -apple-system, sans-serif;
+  --font-serif: var(--font-dm-serif), Georgia, "Times New Roman", serif;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  background-color: var(--bg-cream);
+  color: var(--fg-black);
+  font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+.font-editorial {
+  font-family: var(--font-serif);
+}
+
+.font-display {
+  font-family: var(--font-display);
+}
+
+/* Subtle vintage paper grain overlay */
+.bg-paper-grain {
+  background-color: #f7f4ee;
+  background-image: radial-gradient(rgba(23, 23, 23, 0.045) 0.75px, transparent 0.75px);
+  background-size: 16px 16px;
+}
+
+/* Subtle editorial offset shadow for Y2K print/catalog feel */
+.vintage-shadow {
+  box-shadow: 4px 4px 0px #171717;
+}
+
+.vintage-shadow-sm {
+  box-shadow: 3px 3px 0px #171717;
+}
+
+.vintage-shadow-brown {
+  box-shadow: 4px 4px 0px #795548;
+}
