@@ -106,7 +106,8 @@ export function Footer() {
         <div className="mt-14 border-t border-white/15 pt-7 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-[#E8DED2]/60 font-display tracking-wide">
           <p>© 2026 b.g.c coffee co. All rights reserved.</p>
           <p>
-            Cash on Pickup Ordering Prototype • Cloud-Ready Architecture for AWS
+            Made with {"<3"} by Friends of BGC - Alejos, Dela Peña, Pastoral,
+            Garcia | UA-BSIT4A &apos;2627
           </p>
         </div>
       </div>
