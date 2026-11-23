@@ -1,21 +1,36 @@
 import Link from "next/link";
-import { BrandWordmark } from "@/components/ui/BrandWordmark";
+import Image from "next/image";
 
 export function Footer() {
   return (
     <footer className="bg-[#171717] text-[#F7F4EE] border-t-2 border-[#171717] mt-auto">
       <div className="mx-auto max-w-7xl px-4 py-16 sm:px-6 lg:px-8">
-        <div className="grid grid-cols-1 gap-10 md:grid-cols-2 lg:grid-cols-4">
-          {/* Brand Column */}
-          <div className="space-y-4">
-            <BrandWordmark variant="light" href="/" size="lg" showSubtext />
-            <p className="text-sm leading-relaxed text-[#E8DED2]/75 max-w-xs">
-              A little comfort in every cup. Vintage-inspired specialty coffee
-              brewed fresh daily for seamless counter pickup.
-            </p>
-            <p className="inline-block border border-[#E8DED2]/30 px-2.5 py-1 font-display text-[10px] uppercase tracking-[0.2em] text-[#E8DED2]">
-              Est. Independent Coffee Culture
-            </p>
+        <div className="grid grid-cols-1 gap-10 md:grid-cols-2 lg:grid-cols-4 items-start">
+          {/* Enlarged Official Logo Column */}
+          <div className="flex items-center">
+            <Link
+              href="/"
+              aria-label="b.g.c coffee co. Home"
+              className="inline-flex items-center gap-4 group focus:outline-none focus-visible:ring-2 focus-visible:ring-[#795548]"
+            >
+              <span className="relative inline-flex h-24 w-24 shrink-0 items-center justify-center overflow-hidden rounded-full border-2 border-white/40 bg-white p-3 transition-transform duration-300 group-hover:rotate-[-4deg]">
+                <Image
+                  src="/images/bgc-logo.png"
+                  alt="b.g.c coffee co. official logo"
+                  width={96}
+                  height={96}
+                  className="h-full w-full object-contain"
+                />
+              </span>
+              <span className="flex flex-col leading-none">
+                <span className="font-editorial text-4xl tracking-tight lowercase text-white">
+                  b.g.c
+                </span>
+                <span className="mt-1 font-display text-xs font-semibold tracking-[0.24em] lowercase text-[#E8DED2]/85">
+                  coffee co.
+                </span>
+              </span>
+            </Link>
           </div>
 
           {/* Navigation Column */}
@@ -67,17 +82,20 @@ export function Footer() {
             </ul>
           </div>
 
-          {/* Contact Placeholders */}
+          {/* Store & Hours */}
           <div>
             <h3 className="font-display text-xs font-bold uppercase tracking-[0.22em] text-[#E8DED2] border-b border-white/15 pb-2">
               Store &amp; Hours
             </h3>
-            <ul className="mt-4 space-y-2.5 text-sm text-[#F7F4EE]/75">
-              <li>[Store Location Placeholder — Metro Manila, PH]</li>
-              <li>[Phone Placeholder — (02) 8000-0000]</li>
-              <li>[Email Placeholder — hello@bgccoffee.example]</li>
-              <li className="text-[#E8DED2]/60">
-                Daily: [Hours Placeholder — 7:00 AM – 10:00 PM]
+            <ul className="mt-4 space-y-2.5 text-sm text-[#F7F4EE]/80">
+              <li>
+                803, 8th Ave., Del Pilar, City of San Fernando, Pampanga 2000
+              </li>
+              <li className="pt-1 font-medium text-white">
+                Monday to Friday: 10:00am - 6:00pm
+              </li>
+              <li className="text-xs text-[#E8DED2]/65">
+                Closed during Public Holidays &amp; Class Suspensions
               </li>
             </ul>
           </div>
@@ -87,10 +105,40 @@ export function Footer() {
             <h3 className="font-display text-xs font-bold uppercase tracking-[0.22em] text-[#E8DED2] border-b border-white/15 pb-2">
               Connect
             </h3>
-            <ul className="mt-4 space-y-2.5 text-sm text-[#F7F4EE]/75">
-              <li>Instagram: [@bgccoffee.placeholder]</li>
-              <li>Facebook: [fb.com/bgccoffee.placeholder]</li>
-              <li>TikTok: [@bgccoffee.placeholder]</li>
+            <ul className="mt-4 space-y-2.5 text-sm text-[#F7F4EE]/80">
+              <li>
+                Instagram:{" "}
+                <a
+                  href="https://instagram.com/bgccoffeeco"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="hover:text-white hover:underline underline-offset-4 transition-colors"
+                >
+                  @bgccoffeeco
+                </a>
+              </li>
+              <li>
+                TikTok:{" "}
+                <a
+                  href="https://www.tiktok.com/@bgc.coffee.co"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="hover:text-white hover:underline underline-offset-4 transition-colors"
+                >
+                  @bgc.coffee.co
+                </a>
+              </li>
+              <li>
+                Facebook:{" "}
+                <a
+                  href="https://facebook.com/bgccoffeeco"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="hover:text-white hover:underline underline-offset-4 transition-colors"
+                >
+                  facebook.com/bgccoffeeco
+                </a>
+              </li>
               <li className="pt-3">
                 <Link
                   href="/admin/login"
