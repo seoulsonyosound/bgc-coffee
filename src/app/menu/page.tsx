@@ -17,11 +17,8 @@ export default function MenuPage() {
         <div className="relative z-10 mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <div className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
             <div>
-              <p className="font-display text-xs font-bold uppercase tracking-[0.24em] text-[#795548]">
-                Catalog Index • Handcrafted Beverages
-              </p>
-              <h1 className="mt-2 font-editorial text-5xl text-[#171717] sm:text-6xl">
-                The Coffee Menu
+              <h1 className="font-editorial text-5xl text-[#171717] sm:text-6xl">
+                Menu
               </h1>
               <p className="mt-3 max-w-2xl text-sm leading-relaxed text-[#171717]/75 sm:text-base">
                 Freshly pulled espresso, chilled signature lattes, and

@@ -248,12 +248,7 @@ export function PromoSection() {
 
           {/* Right: Editorial Brand Note Caption */}
           <div className="lg:col-span-7 flex flex-col justify-center lg:pl-4">
-            <span className="inline-flex w-fit items-center gap-2 rounded-full border border-white/15 bg-white/5 px-3.5 py-1 font-display text-[10px] font-semibold uppercase tracking-[0.22em] text-[#E8DED2]">
-              <span className="h-1.5 w-1.5 rounded-full bg-[#795548]" />
-              From Our Little Corner
-            </span>
-
-            <h2 className="mt-5 font-editorial text-3xl sm:text-4xl lg:text-[2.7rem] text-white leading-tight">
+            <h2 className="font-editorial text-3xl sm:text-4xl lg:text-[2.7rem] text-white leading-tight">
               we&apos;ll save you from disappointment —
             </h2>
 

@@ -37,10 +37,7 @@ export function FeaturedProducts() {
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <div className="flex flex-col justify-between gap-4 border-b border-[#171717] pb-6 sm:flex-row sm:items-end">
           <div>
-            <p className="font-display text-xs font-bold uppercase tracking-[0.22em] text-[#795548]">
-              Catalog Selection • No. 01
-            </p>
-            <h2 className="mt-2 font-editorial text-4xl text-[#171717] sm:text-5xl">
+            <h2 className="font-editorial text-4xl text-[#171717] sm:text-5xl">
               Featured Brews
             </h2>
             <p className="mt-2 max-w-xl text-sm text-[#171717]/70">

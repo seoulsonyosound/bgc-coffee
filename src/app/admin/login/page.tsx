@@ -3,7 +3,7 @@
 import { useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { AlertCircle, ArrowLeft, Info, Loader2, Lock } from "lucide-react";
+import { AlertCircle, ArrowLeft, Loader2, Lock } from "lucide-react";
 import { BrandWordmark } from "@/components/ui/BrandWordmark";
 import { STORAGE_KEYS, writeLocalStorage } from "@/lib/storage";
 
@@ -60,34 +60,6 @@ export default function AdminLoginPage() {
               <p className="font-display text-[10px] font-semibold uppercase tracking-[0.18em] text-[#795548]">
                 b.g.c coffee co. management
               </p>
-            </div>
-          </div>
-
-          {/* Prototype Notice */}
-          <div className="mt-5 border border-[#171717]/30 bg-[#F7F4EE] p-4 text-xs text-[#171717]/85">
-            <div className="flex items-start gap-2">
-              <Info className="mt-0.5 h-4 w-4 shrink-0 text-[#795548]" />
-              <div>
-                <p className="font-display font-bold text-[#795548] uppercase tracking-[0.14em]">
-                  Local Prototype Demo Credentials
-                </p>
-                <p className="mt-1">
-                  Email:{" "}
-                  <code className="border border-[#D9D9D9] bg-white px-1.5 py-0.5 font-semibold text-[#171717]">
-                    admin@bgccoffee.demo
-                  </code>
-                </p>
-                <p className="mt-0.5">
-                  Password:{" "}
-                  <code className="border border-[#D9D9D9] bg-white px-1.5 py-0.5 font-semibold text-[#171717]">
-                    BgcAdmin2026!
-                  </code>
-                </p>
-                <p className="mt-1.5 text-[11px] text-[#171717]/60">
-                  Mock authentication for local development only—not
-                  production-grade security.
-                </p>
-              </div>
             </div>
           </div>
 

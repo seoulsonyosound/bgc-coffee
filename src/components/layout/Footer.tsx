@@ -1,5 +1,6 @@
 import Link from "next/link";
 import Image from "next/image";
+import { Mail } from "lucide-react";
 
 export function Footer() {
   return (
@@ -105,47 +106,87 @@ export function Footer() {
             <h3 className="font-display text-xs font-bold uppercase tracking-[0.22em] text-[#E8DED2] border-b border-white/15 pb-2">
               Connect
             </h3>
-            <ul className="mt-4 space-y-2.5 text-sm text-[#F7F4EE]/80">
+            <ul className="mt-4 space-y-3 text-sm text-[#F7F4EE]/80">
               <li>
-                Instagram:{" "}
                 <a
-                  href="https://instagram.com/bgccoffeeco"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="hover:text-white hover:underline underline-offset-4 transition-colors"
+                  href="mailto:bgccoffeeco@gmail.com"
+                  aria-label="Email bgccoffeeco@gmail.com"
+                  className="inline-flex items-center gap-2.5 hover:text-white transition-colors"
                 >
-                  @bgccoffeeco
+                  <Mail className="h-4 w-4 shrink-0 text-[#E8DED2]" />
+                  <span className="hover:underline underline-offset-4">
+                    bgccoffeeco@gmail.com
+                  </span>
                 </a>
               </li>
               <li>
-                TikTok:{" "}
-                <a
-                  href="https://www.tiktok.com/@bgc.coffee.co"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="hover:text-white hover:underline underline-offset-4 transition-colors"
-                >
-                  @bgc.coffee.co
-                </a>
-              </li>
-              <li>
-                Facebook:{" "}
                 <a
                   href="https://facebook.com/bgccoffeeco"
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="hover:text-white hover:underline underline-offset-4 transition-colors"
+                  aria-label="Facebook facebook.com/bgccoffeeco"
+                  className="inline-flex items-center gap-2.5 hover:text-white transition-colors"
                 >
-                  facebook.com/bgccoffeeco
+                  <svg
+                    aria-hidden="true"
+                    viewBox="0 0 24 24"
+                    fill="currentColor"
+                    className="h-4 w-4 shrink-0 text-[#E8DED2]"
+                  >
+                    <path d="M14 13.5h2.5l1-4H14v-2c0-1.03 0-2 2-2h1.5V2.14c-.326-.043-1.557-.14-2.857-.14C11.928 2 10 3.657 10 6.7v2.8H7v4h3V22h4v-8.5z" />
+                  </svg>
+                  <span className="hover:underline underline-offset-4">
+                    bgccoffeeco
+                  </span>
                 </a>
               </li>
-              <li className="pt-3">
-                <Link
-                  href="/admin/login"
-                  className="inline-block border border-[#E8DED2]/35 px-3 py-1.5 font-display text-[11px] font-semibold uppercase tracking-[0.16em] text-[#E8DED2] hover:bg-[#795548] hover:border-[#795548] hover:text-white transition-colors"
+              <li>
+                <a
+                  href="https://instagram.com/bgccoffeeco"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  aria-label="Instagram @bgccoffeeco"
+                  className="inline-flex items-center gap-2.5 hover:text-white transition-colors"
                 >
-                  Staff &amp; Admin Portal →
-                </Link>
+                  <svg
+                    aria-hidden="true"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="2"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    className="h-4 w-4 shrink-0 text-[#E8DED2]"
+                  >
+                    <rect width="20" height="20" x="2" y="2" rx="5" ry="5" />
+                    <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z" />
+                    <line x1="17.5" x2="17.51" y1="6.5" y2="6.5" />
+                  </svg>
+                  <span className="hover:underline underline-offset-4">
+                    @bgccoffeeco
+                  </span>
+                </a>
+              </li>
+              <li>
+                <a
+                  href="https://www.tiktok.com/@bgc.coffee.co"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  aria-label="TikTok @bgc.coffee.co"
+                  className="inline-flex items-center gap-2.5 hover:text-white transition-colors"
+                >
+                  <svg
+                    aria-hidden="true"
+                    viewBox="0 0 24 24"
+                    fill="currentColor"
+                    className="h-4 w-4 shrink-0 text-[#E8DED2]"
+                  >
+                    <path d="M19.59 6.69a4.83 4.83 0 0 1-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 0 1-2.88 2.5 2.89 2.89 0 0 1-2.89-2.89 2.89 2.89 0 0 1 2.89-2.89c.28 0 .54.04.79.1v-3.5a6.37 6.37 0 0 0-.79-.05A6.34 6.34 0 0 0 3.15 15a6.34 6.34 0 0 0 6.34 6.34 6.34 6.34 0 0 0 6.34-6.34V8.73a8.19 8.19 0 0 0 4.76 1.52v-3.4a4.85 4.85 0 0 1-1-.16z" />
+                  </svg>
+                  <span className="hover:underline underline-offset-4">
+                    @bgc.coffee.co
+                  </span>
+                </a>
               </li>
             </ul>
           </div>

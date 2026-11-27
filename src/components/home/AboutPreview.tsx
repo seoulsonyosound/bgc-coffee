@@ -5,7 +5,7 @@ import { ReelPlayer } from "@/components/ui/ReelPlayer";
 const PILLARS = [
   {
     num: "01",
-    text: "Specialty-grade Arabica beans roasted for clean caramel and dark cocoa balance.",
+    text: "101% Handcrafted Beans roasted for clean caramel and dark cocoa balance.",
   },
   {
     num: "02",
@@ -21,12 +21,6 @@ export function AboutPreview() {
   return (
     <section className="relative overflow-hidden bg-paper-grain py-20 sm:py-24">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-        {/* Editorial Section Metadata Strip */}
-        <div className="mb-12 flex flex-wrap items-center justify-between gap-2 border-b border-[#171717] pb-3 font-display text-[11px] font-semibold uppercase tracking-[0.2em] text-[#171717]/75">
-          <span>SECTION 03 — BEHIND THE COUNTER</span>
-          <span className="text-[#795548]">SMALL-BATCH ESPRESSO BAR</span>
-        </div>
-
         <div className="grid grid-cols-1 items-center gap-12 lg:grid-cols-12 lg:gap-14">
           {/* Copy */}
           <div className="lg:col-span-6">
@@ -100,7 +94,7 @@ export function AboutPreview() {
                   <span className="h-1.5 w-1.5 rounded-full bg-[#795548]" />
                 </div>
                 <p className="mt-1.5 font-editorial italic text-sm leading-snug text-[#171717]">
-                  Double-shot espresso, pulled fresh to order.
+                  p.s hindi ito sa taguig
                 </p>
                 <div className="mt-2 border-t border-dashed border-[#171717]/25 pt-1.5 flex items-center justify-between font-display text-[8px] font-semibold uppercase tracking-[0.16em] text-[#171717]/60">
                   <span>18g Dose</span>
@@ -112,7 +106,7 @@ export function AboutPreview() {
               <div className="hidden sm:block pointer-events-none absolute left-[calc(100%-18px)] -bottom-4 z-20 w-44 rotate-2 border border-[#171717] bg-[#3B2923] px-3.5 py-3 text-[#F7F4EE] shadow-[3px_3px_0px_#795548]">
                 <div className="flex items-center justify-between gap-2">
                   <span className="font-display text-[9px] font-bold uppercase tracking-[0.2em] text-[#E8DED2]">
-                    100% Arabica
+                    101% Handcrafted Beans
                   </span>
                   <span className="font-display text-[8px] uppercase tracking-[0.14em] text-[#E8DED2]/60">
                     No. 01
