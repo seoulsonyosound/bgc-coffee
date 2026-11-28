@@ -1,29 +1,22 @@
 import { NextRequest, NextResponse } from "next/server";
-
-/**
- * Prototype Admin Authentication Route Handler
- *
- * WARNING: This is a local prototype authentication mechanism using documented
- * demo credentials. It is NOT production-grade security.
- *
- * Future Production Architecture:
- * Replace with secure server-side session management (e.g., AWS Cognito or
- * signed HTTP-only JWT sessions backed by bcrypt/Argon2 password hashes).
- */
-
-const DEMO_ADMIN_EMAIL = "admin@bgccoffee.demo";
-const DEMO_ADMIN_PASSWORD = "BgcAdmin2026!";
-const SESSION_COOKIE_NAME = "bgc_admin_demo_session";
+import {
+  createAdminSessionToken,
+  getAdminConfig,
+  isAdminConfigured,
+  isAdminRequest,
+  verifyAdminCredentials,
+} from "@/lib/admin-auth";
+import { ADMIN_SESSION_COOKIE } from "@/services/auth-service";
 
 export async function GET(request: NextRequest) {
-  const token = request.cookies.get(SESSION_COOKIE_NAME)?.value;
-  if (token === "authenticated-demo-admin") {
+  if (isAdminRequest(request)) {
+    const { email } = getAdminConfig();
     return NextResponse.json({
       authenticated: true,
       admin: {
         name: "BGC Store Manager",
-        email: DEMO_ADMIN_EMAIL,
-        role: "Administrator (Prototype)",
+        email,
+        role: "Administrator",
       },
     });
   }
@@ -32,23 +25,31 @@ export async function GET(request: NextRequest) {
 
 export async function POST(request: NextRequest) {
   try {
+    if (!isAdminConfigured()) {
+      return NextResponse.json(
+        { error: "Administrator credentials are not configured on the server." },
+        { status: 503 }
+      );
+    }
+
     const body = await request.json();
     const email = String(body?.email || "").trim().toLowerCase();
     const password = String(body?.password || "");
 
-    if (email !== DEMO_ADMIN_EMAIL || password !== DEMO_ADMIN_PASSWORD) {
+    if (!verifyAdminCredentials(email, password)) {
       return NextResponse.json(
-        { error: "Invalid demo credentials. Use the documented prototype login." },
+        { error: "Invalid administrator email or password." },
         { status: 401 }
       );
     }
 
+    const { email: adminEmail } = getAdminConfig();
     const response = NextResponse.json({
       authenticated: true,
       admin: {
         name: "BGC Store Manager",
-        email: DEMO_ADMIN_EMAIL,
-        role: "Administrator (Prototype)",
+        email: adminEmail,
+        role: "Administrator",
       },
     });
 
@@ -56,7 +57,7 @@ export async function POST(request: NextRequest) {
       request.headers.get("x-forwarded-proto") === "https" ||
       request.nextUrl.protocol === "https:";
 
-    response.cookies.set(SESSION_COOKIE_NAME, "authenticated-demo-admin", {
+    response.cookies.set(ADMIN_SESSION_COOKIE, createAdminSessionToken(), {
       httpOnly: true,
       sameSite: "lax",
       secure: isHttps,
@@ -73,11 +74,16 @@ export async function POST(request: NextRequest) {
   }
 }
 
-export async function DELETE() {
+export async function DELETE(request: NextRequest) {
+  const isHttps =
+    request.headers.get("x-forwarded-proto") === "https" ||
+    request.nextUrl.protocol === "https:";
+
   const response = NextResponse.json({ authenticated: false });
-  response.cookies.set(SESSION_COOKIE_NAME, "", {
+  response.cookies.set(ADMIN_SESSION_COOKIE, "", {
     httpOnly: true,
     sameSite: "lax",
+    secure: isHttps,
     path: "/",
     maxAge: 0,
   });

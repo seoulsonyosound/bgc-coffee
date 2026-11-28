@@ -8,19 +8,12 @@ import {
   updateMultipleOrderStatuses,
 } from "@/services/order-service";
 import {
-  ADMIN_SESSION_COOKIE,
   CUSTOMER_SESSION_COOKIE,
   getCustomerBySessionToken,
 } from "@/services/auth-service";
+import { isAdminRequest } from "@/lib/admin-auth";
 import { isValidEmail, isValidPhoneNumber } from "@/lib/utils";
 import { ORDER_STATUSES, OrderStatus } from "@/types/order";
-
-function isAdminRequest(request: NextRequest): boolean {
-  return (
-    request.cookies.get(ADMIN_SESSION_COOKIE)?.value ===
-    "authenticated-demo-admin"
-  );
-}
 
 export async function GET(request: NextRequest) {
   try {

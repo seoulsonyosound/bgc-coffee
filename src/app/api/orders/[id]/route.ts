@@ -1,22 +1,15 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getOrderByIdOrRef, updateOrderStatus } from "@/services/order-service";
 import {
-  ADMIN_SESSION_COOKIE,
   CUSTOMER_SESSION_COOKIE,
   getCustomerBySessionToken,
 } from "@/services/auth-service";
+import { isAdminRequest } from "@/lib/admin-auth";
 import { ORDER_STATUSES, OrderStatus } from "@/types/order";
 
 type RouteContext = {
   params: Promise<{ id: string }>;
 };
-
-function isAdminRequest(request: NextRequest): boolean {
-  return (
-    request.cookies.get(ADMIN_SESSION_COOKIE)?.value ===
-    "authenticated-demo-admin"
-  );
-}
 
 export async function GET(request: NextRequest, context: RouteContext) {
   try {

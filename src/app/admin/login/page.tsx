@@ -9,8 +9,8 @@ import { STORAGE_KEYS, writeLocalStorage } from "@/lib/storage";
 
 export default function AdminLoginPage() {
   const router = useRouter();
-  const [email, setEmail] = useState("admin@bgccoffee.demo");
-  const [password, setPassword] = useState("BgcAdmin2026!");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
 

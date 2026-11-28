@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createProduct, getProducts } from "@/services/product-service";
-import { ADMIN_SESSION_COOKIE } from "@/services/auth-service";
+import { isAdminRequest } from "@/lib/admin-auth";
 import { PRODUCT_CATEGORIES, ProductCategory } from "@/types/product";
 
 export async function GET(request: NextRequest) {
@@ -37,10 +37,7 @@ export async function GET(request: NextRequest) {
 
 export async function POST(request: NextRequest) {
   try {
-    if (
-      request.cookies.get(ADMIN_SESSION_COOKIE)?.value !==
-      "authenticated-demo-admin"
-    ) {
+    if (!isAdminRequest(request)) {
       return NextResponse.json(
         { error: "Administrator authentication required." },
         { status: 403 }

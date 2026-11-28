@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { ADMIN_SESSION_COOKIE } from "@/services/auth-service";
+import { isAdminRequest } from "@/lib/admin-auth";
 import { isS3UploadConfigured, uploadProductImageToS3 } from "@/lib/s3";
 
 const ALLOWED_MIME_TYPES = new Set([
@@ -15,10 +15,7 @@ const MAX_FILE_BYTES = 5 * 1024 * 1024; // 5 MB
 
 export async function POST(request: NextRequest) {
   try {
-    if (
-      request.cookies.get(ADMIN_SESSION_COOKIE)?.value !==
-      "authenticated-demo-admin"
-    ) {
+    if (!isAdminRequest(request)) {
       return NextResponse.json(
         { error: "Administrator authentication required." },
         { status: 403 }

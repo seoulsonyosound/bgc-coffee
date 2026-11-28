@@ -5,7 +5,7 @@ import {
   getProductBySlug,
   updateProduct,
 } from "@/services/product-service";
-import { ADMIN_SESSION_COOKIE } from "@/services/auth-service";
+import { isAdminRequest } from "@/lib/admin-auth";
 
 type RouteContext = {
   params: Promise<{ id: string }>;
@@ -35,10 +35,7 @@ export async function GET(_request: NextRequest, context: RouteContext) {
 
 export async function PATCH(request: NextRequest, context: RouteContext) {
   try {
-    if (
-      request.cookies.get(ADMIN_SESSION_COOKIE)?.value !==
-      "authenticated-demo-admin"
-    ) {
+    if (!isAdminRequest(request)) {
       return NextResponse.json(
         { error: "Administrator authentication required." },
         { status: 403 }
@@ -78,10 +75,7 @@ export async function PATCH(request: NextRequest, context: RouteContext) {
 
 export async function DELETE(request: NextRequest, context: RouteContext) {
   try {
-    if (
-      request.cookies.get(ADMIN_SESSION_COOKIE)?.value !==
-      "authenticated-demo-admin"
-    ) {
+    if (!isAdminRequest(request)) {
       return NextResponse.json(
         { error: "Administrator authentication required." },
         { status: 403 }
