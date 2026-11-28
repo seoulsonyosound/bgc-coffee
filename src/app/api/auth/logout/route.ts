@@ -9,11 +9,15 @@ export async function POST(request: NextRequest) {
     const token = request.cookies.get(CUSTOMER_SESSION_COOKIE)?.value;
     await revokeCustomerSession(token);
 
+    const isHttps =
+      request.headers.get("x-forwarded-proto") === "https" ||
+      request.nextUrl.protocol === "https:";
+
     const response = NextResponse.json({ authenticated: false }, { status: 200 });
     response.cookies.set(CUSTOMER_SESSION_COOKIE, "", {
       httpOnly: true,
       sameSite: "lax",
-      secure: request.nextUrl.protocol === "https:",
+      secure: isHttps,
       path: "/",
       maxAge: 0,
     });

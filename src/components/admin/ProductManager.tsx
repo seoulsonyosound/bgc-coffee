@@ -140,9 +140,42 @@ export function ProductManager() {
     setModalOpen(true);
   };
 
-  const handleImageFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleImageFileUpload = async (
+    e: React.ChangeEvent<HTMLInputElement>
+  ) => {
     const file = e.target.files?.[0];
     if (!file) return;
+    if (file.size > 5_000_000) {
+      setFormError("Please select an image smaller than 5MB.");
+      return;
+    }
+
+    // Attempt S3 upload via server API first (production AWS mode)
+    try {
+      const formData = new FormData();
+      formData.append("file", file);
+      const res = await fetch("/api/admin/upload", {
+        method: "POST",
+        body: formData,
+      });
+
+      if (res.ok) {
+        const data = await res.json();
+        if (typeof data.url === "string") {
+          setForm((prev) => ({ ...prev, imageUrl: data.url }));
+          setFormError(null);
+          return;
+        }
+      } else if (res.status !== 501) {
+        const errData = await res.json().catch(() => ({}));
+        setFormError(errData.error || "Failed to upload image.");
+        return;
+      }
+    } catch {
+      // Fall through to local prototype FileReader fallback
+    }
+
+    // Local prototype fallback when S3_ASSETS_BUCKET is not configured
     if (file.size > 1_500_000) {
       setFormError(
         "Please select an image smaller than 1.5MB for local prototype storage."

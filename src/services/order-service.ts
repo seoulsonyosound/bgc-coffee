@@ -1,16 +1,58 @@
+import {
+  GetCommand,
+  PutCommand,
+  QueryCommand,
+  ScanCommand,
+  UpdateCommand,
+} from "@aws-sdk/lib-dynamodb";
+import { isDynamoDbMode } from "@/lib/aws-config";
+import { getDynamoDbDocClient, getTableNames } from "@/lib/dynamodb";
 import { readMockDb, writeMockDb } from "@/lib/mock-db";
 import { generateOrderReference } from "@/lib/utils";
+import { getProducts } from "@/services/product-service";
 import { CreateOrderInput, Order, OrderItem, OrderStatus } from "@/types/order";
 
 /**
  * Order Service (Server-Side Data Access Layer)
  *
- * Currently backed by local mock-db.ts.
- * Designed with async method signatures so it can be replaced cleanly with
- * Amazon DynamoDB (DocumentClient) in Phase 2 without changing UI or API routes.
+ * Switches cleanly between local mock-db.ts (BGC_DATA_SOURCE=mock) and
+ * Amazon DynamoDB (BGC_DATA_SOURCE=dynamodb) using the EC2 IAM Instance Role.
  */
 
+async function scanAllOrders(): Promise<Order[]> {
+  const doc = getDynamoDbDocClient();
+  const { orders: tableName } = getTableNames();
+  const items: Order[] = [];
+  let lastEvaluatedKey: Record<string, unknown> | undefined;
+
+  do {
+    const res = await doc.send(
+      new ScanCommand({
+        TableName: tableName,
+        ExclusiveStartKey: lastEvaluatedKey,
+      })
+    );
+    if (res.Items) {
+      items.push(...(res.Items as Order[]));
+    }
+    lastEvaluatedKey = res.LastEvaluatedKey;
+  } while (lastEvaluatedKey);
+
+  items.sort(
+    (a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
+  );
+  return items;
+}
+
 export async function getOrders(status?: OrderStatus | "All"): Promise<Order[]> {
+  if (isDynamoDbMode()) {
+    let orders = await scanAllOrders();
+    if (status && status !== "All") {
+      orders = orders.filter((o) => o.status === status);
+    }
+    return orders;
+  }
+
   const db = readMockDb();
   let orders = [...db.orders];
 
@@ -26,6 +68,38 @@ export async function getOrders(status?: OrderStatus | "All"): Promise<Order[]> 
 }
 
 export async function getOrderByIdOrRef(idOrRef: string): Promise<Order | null> {
+  if (isDynamoDbMode()) {
+    const doc = getDynamoDbDocClient();
+    const { orders: tableName } = getTableNames();
+
+    const byId = await doc.send(
+      new GetCommand({
+        TableName: tableName,
+        Key: { id: idOrRef },
+      })
+    );
+    if (byId.Item) {
+      return byId.Item as Order;
+    }
+
+    const candidates = Array.from(new Set([idOrRef, idOrRef.toUpperCase()]));
+    for (const ref of candidates) {
+      const byRef = await doc.send(
+        new QueryCommand({
+          TableName: tableName,
+          IndexName: "orderReference-index",
+          KeyConditionExpression: "orderReference = :ref",
+          ExpressionAttributeValues: { ":ref": ref },
+          Limit: 1,
+        })
+      );
+      if (byRef.Items && byRef.Items.length > 0) {
+        return byRef.Items[0] as Order;
+      }
+    }
+    return null;
+  }
+
   const db = readMockDb();
   return (
     db.orders.find(
@@ -39,6 +113,26 @@ export async function getOrderByIdOrRef(idOrRef: string): Promise<Order | null> 
 export async function getOrdersByCustomerId(
   customerId: string
 ): Promise<Order[]> {
+  if (isDynamoDbMode()) {
+    const doc = getDynamoDbDocClient();
+    const { orders: tableName } = getTableNames();
+    const res = await doc.send(
+      new QueryCommand({
+        TableName: tableName,
+        IndexName: "customerId-index",
+        KeyConditionExpression: "customerId = :cid",
+        ExpressionAttributeValues: { ":cid": customerId },
+        ScanIndexForward: false,
+      })
+    );
+    const orders = (res.Items as Order[] | undefined) ?? [];
+    orders.sort(
+      (a, b) =>
+        new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
+    );
+    return orders;
+  }
+
   const db = readMockDb();
   const orders = db.orders.filter((o) => o.customerId === customerId);
   orders.sort(
@@ -51,7 +145,6 @@ export async function createOrder(
   input: CreateOrderInput,
   customerId?: string
 ): Promise<Order> {
-  const db = readMockDb();
   const now = new Date().toISOString();
 
   const normalizedItems: OrderItem[] = input.items.map((item) => {
@@ -73,6 +166,43 @@ export async function createOrder(
   const subtotal = normalizedItems.reduce((sum, item) => sum + item.subtotal, 0);
   const totalAmount = subtotal;
 
+  if (isDynamoDbMode()) {
+    let orderReference = generateOrderReference();
+    while (await getOrderByIdOrRef(orderReference)) {
+      orderReference = generateOrderReference();
+    }
+
+    const newOrder: Order = {
+      id: `ord-${Date.now().toString(36)}-${Math.floor(100 + Math.random() * 900)}`,
+      orderReference,
+      customerId,
+      customer: {
+        fullName: input.customer.fullName.trim(),
+        contactNumber: input.customer.contactNumber.trim(),
+        email: input.customer.email?.trim() || undefined,
+        pickupNotes: input.customer.pickupNotes?.trim() || undefined,
+      },
+      items: normalizedItems,
+      subtotal,
+      totalAmount,
+      paymentMethod: "Cash on Pickup",
+      status: "Pending",
+      createdAt: now,
+      updatedAt: now,
+    };
+
+    const doc = getDynamoDbDocClient();
+    const { orders: tableName } = getTableNames();
+    await doc.send(
+      new PutCommand({
+        TableName: tableName,
+        Item: newOrder,
+      })
+    );
+    return newOrder;
+  }
+
+  const db = readMockDb();
   let orderReference = generateOrderReference();
   while (db.orders.some((o) => o.orderReference === orderReference)) {
     orderReference = generateOrderReference();
@@ -106,6 +236,30 @@ export async function updateOrderStatus(
   id: string,
   status: OrderStatus
 ): Promise<Order | null> {
+  if (isDynamoDbMode()) {
+    const existing = await getOrderByIdOrRef(id);
+    if (!existing) return null;
+
+    const updatedAt = new Date().toISOString();
+    const doc = getDynamoDbDocClient();
+    const { orders: tableName } = getTableNames();
+
+    const res = await doc.send(
+      new UpdateCommand({
+        TableName: tableName,
+        Key: { id: existing.id },
+        UpdateExpression: "SET #s = :status, updatedAt = :updatedAt",
+        ExpressionAttributeNames: { "#s": "status" },
+        ExpressionAttributeValues: {
+          ":status": status,
+          ":updatedAt": updatedAt,
+        },
+        ReturnValues: "ALL_NEW",
+      })
+    );
+    return (res.Attributes as Order | undefined) ?? { ...existing, status, updatedAt };
+  }
+
   const db = readMockDb();
   const index = db.orders.findIndex(
     (o) => o.id === id || o.orderReference === id
@@ -126,6 +280,13 @@ export async function updateMultipleOrderStatuses(
   orderIds: string[],
   status: OrderStatus
 ): Promise<Order[]> {
+  if (isDynamoDbMode()) {
+    const results = await Promise.all(
+      orderIds.map((orderId) => updateOrderStatus(orderId, status))
+    );
+    return results.filter((order): order is Order => order !== null);
+  }
+
   const db = readMockDb();
   const idSet = new Set(orderIds);
   const now = new Date().toISOString();
@@ -151,6 +312,30 @@ export async function updateMultipleOrderStatuses(
 }
 
 export async function getDashboardMetrics() {
+  if (isDynamoDbMode()) {
+    const [products, orders] = await Promise.all([getProducts(), getOrders()]);
+    const totalProducts = products.length;
+    const availableProducts = products.filter((p) => p.available).length;
+    const totalOrders = orders.length;
+    const pendingOrders = orders.filter((o) => o.status === "Pending").length;
+    const completedOrders = orders.filter(
+      (o) => o.status === "Completed"
+    ).length;
+
+    const totalSales = orders
+      .filter((o) => o.status !== "Cancelled")
+      .reduce((sum, o) => sum + o.totalAmount, 0);
+
+    return {
+      totalProducts,
+      availableProducts,
+      totalOrders,
+      pendingOrders,
+      completedOrders,
+      totalSales,
+    };
+  }
+
   const db = readMockDb();
   const totalProducts = db.products.length;
   const availableProducts = db.products.filter((p) => p.available).length;

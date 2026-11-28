@@ -28,10 +28,14 @@ export async function POST(request: NextRequest) {
       { status: 200 }
     );
 
+    const isHttps =
+      request.headers.get("x-forwarded-proto") === "https" ||
+      request.nextUrl.protocol === "https:";
+
     response.cookies.set(CUSTOMER_SESSION_COOKIE, result.sessionToken, {
       httpOnly: true,
       sameSite: "lax",
-      secure: request.nextUrl.protocol === "https:",
+      secure: isHttps,
       path: "/",
       maxAge: result.maxAgeSeconds,
     });

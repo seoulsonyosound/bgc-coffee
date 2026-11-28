@@ -52,9 +52,14 @@ export async function POST(request: NextRequest) {
       },
     });
 
+    const isHttps =
+      request.headers.get("x-forwarded-proto") === "https" ||
+      request.nextUrl.protocol === "https:";
+
     response.cookies.set(SESSION_COOKIE_NAME, "authenticated-demo-admin", {
       httpOnly: true,
       sameSite: "lax",
+      secure: isHttps,
       path: "/",
       maxAge: 60 * 60 * 8, // 8 hours
     });
